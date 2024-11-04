@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build files
+build/
+dist/
+
+# Config files with sensitive info
+config/*.json
+.env
+
+# Logs
+*.log
+
+# Compiled TypeScript files
+src/**/*.js
+src/**/*.js.map
+
+# Lock file (optional)
+# package-lock.json
