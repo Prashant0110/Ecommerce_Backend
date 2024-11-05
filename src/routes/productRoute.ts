@@ -24,4 +24,12 @@ router
     ProductController.deleteProduct
   );
 
+router
+  .route("/update/:id")
+  .patch(
+    authMiddleware.isAuthenticated,
+    authMiddleware.restrictTo(Role.Admin),
+    ProductController.updateProduct
+  );
+
 export default router;

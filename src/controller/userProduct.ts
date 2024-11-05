@@ -72,6 +72,16 @@ class ProductController {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "email", "username"],
+        },
+        {
+          model: Category,
+          attributes: ["categoryName", "id"],
+        },
+      ],
     });
     if (data.length == 0) {
       res.status(404).json({
@@ -110,6 +120,58 @@ class ProductController {
       });
     }
   }
-}
 
+  public static async updateProduct(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const { id } = req.params;
+    const { description, quantity, price, productName, categoryId } = req.body;
+    if (!description || !quantity || !price || !productName || !categoryId) {
+      res.status(400).json({
+        message:
+          "Please enter description,quantity,categoryId,productName and price",
+      });
+      return;
+    }
+    try {
+      // Check if the product exists
+      const existingProduct = await Product.findOne({
+        where: { id },
+      });
+
+      if (!existingProduct) {
+        res.status(404).json({
+          message: "Product not found",
+        });
+        return;
+      }
+
+      const data = await Product.update(
+        {
+          productName,
+          description,
+          price,
+          quantity,
+          categoryId,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+      res.status(200).json({
+        message: "Product Updated Successfully",
+        data,
+      });
+    } catch (error: unknown) {
+      // Handle potential errors
+      res.status(500).json({
+        message: "An error occurred while updating the product",
+        error: (error as Error).message,
+      });
+    }
+  }
+}
 export default ProductController;
