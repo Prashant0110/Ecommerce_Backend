@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import Product from "../models/productModel";
 
 class CategoryController {
-  categoryData = [
+  public static categoryData = [
     {
       categoryName: "Electronics",
     },
@@ -23,7 +23,7 @@ class CategoryController {
       categoryName: "Adults",
     },
   ];
-  async seedCategory(): Promise<void> {
+  public static async seedCategory(): Promise<void> {
     const datas = await Category.findAll();
     if (datas.length == 0) {
       const data = await Category.bulkCreate(this.categoryData);
@@ -119,4 +119,4 @@ class CategoryController {
   }
 }
 
-export default new CategoryController();
+export default CategoryController;

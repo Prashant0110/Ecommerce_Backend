@@ -6,6 +6,8 @@ import userRoute from "./routes/userRoute";
 import productRoute from "./routes/productRoute";
 import adminSeeder from "./adminSeeder";
 import categoryController from "./controller/categoryController";
+import categoryRoute from "./routes/categoryRoute";
+import cartRoute from "./routes/cartRoutes";
 
 const app: Application = express();
 const PORT: number = Number(process.env.PORT) || 3000; // Use PORT from env or fallback to 3000
@@ -21,6 +23,8 @@ categoryController.seedCategory();
 // Define routes
 app.use("", userRoute);
 app.use("/admin/product", productRoute);
+app.use("/admin", categoryRoute);
+app.use("/customer/cart", cartRoute);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
