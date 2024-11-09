@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authMiddleware";
 import Cart from "../models/Cart";
 import Product from "../models/productModel";
+import Category from "../models/Category";
 
 class CartController {
   public static async addToCart(
@@ -54,6 +55,12 @@ class CartController {
         {
           model: Product,
           attributes: ["productName", "price", "imagePath"],
+          include: [
+            {
+              model: Category,
+              attributes: ["categoryName"],
+            },
+          ],
         },
       ],
     });
@@ -67,6 +74,64 @@ class CartController {
         cartItems,
       });
     }
+  }
+
+  public static async deleteCartItems(
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+    if (!product) {
+      res.status(404).json({
+        message: "Product not found",
+      });
+      return;
+    }
+    await Cart.destroy({
+      where: {
+        userId,
+        id,
+      },
+    });
+    res.status(200).json({
+      message: "Product deleted successfully",
+    });
+  }
+
+  public static async updateCartItems(
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> {
+    const userId = req.user?.id;
+    const { id: productId } = req.params;
+    const { quantity } = req.body;
+    if (!quantity || quantity < 1) {
+      res.status(400).json({
+        message: "Please enter valid quantity",
+      });
+    }
+    const cartItem = await Cart.findOne({
+      where: {
+        userId,
+        productId,
+      },
+    });
+
+    if (!cartItem) {
+      res.status(404).json({
+        message: "Cart item not found",
+      });
+      return;
+    }
+
+    cartItem.quantity = quantity;
+    await cartItem.save();
+    res.status(200).json({
+      message: "Cart item updated successfully",
+      cartItem,
+    });
   }
 }
 

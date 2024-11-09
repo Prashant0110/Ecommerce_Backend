@@ -12,17 +12,9 @@ router
   )
   .get(authMiddleware.isAuthenticated, CartController.getMyCart);
 
-// router
-//   .route("/category/:id")
-//   .delete(
-//     authMiddleware.isAuthenticated,
-//     authMiddleware.restrictTo(Role.Admin),
-//     CategoryController.deleteCategory
-//   )
-//   .patch(
-//     authMiddleware.isAuthenticated,
-//     authMiddleware.restrictTo(Role.Admin),
-//     CategoryController.updateCategory
-//   );
+router
+  .route("/:productId")
+  .patch(authMiddleware.isAuthenticated, CartController.updateCartItems)
+  .delete(authMiddleware.isAuthenticated, CartController.deleteCartItems);
 
 export default router;
