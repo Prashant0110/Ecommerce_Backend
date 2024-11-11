@@ -12,7 +12,7 @@ import {
   modelName: "Order",
   timestamps: true,
 })
-class Product extends Model {
+class Order extends Model {
   @Column({
     primaryKey: true,
     type: DataType.UUID,
@@ -44,9 +44,9 @@ class Product extends Model {
       "ontheway",
       "preparation"
     ),
-    default: "pending",
+    defaultValue: "pending",
   })
   declare orderStatus: string;
 }
 
-export default Product;
+export default Order;
