@@ -1,20 +1,28 @@
 import express, { Router } from "express";
-import CartController from "../controller/cartController";
+import CategoryController from "../controller/categoryController";
 import authMiddleware, { Role } from "../middleware/authMiddleware";
 const router: Router = express.Router();
 
 router
-  .route("")
+  .route("/category")
   .post(
     authMiddleware.isAuthenticated,
     authMiddleware.restrictTo(Role.Admin),
-    CartController.addToCart
+    CategoryController.addCategory
   )
-  .get(authMiddleware.isAuthenticated, CartController.getMyCart);
+  .get(CategoryController.getCategories);
 
 router
-  .route("/:productId")
-  .patch(authMiddleware.isAuthenticated, CartController.updateCartItems)
-  .delete(authMiddleware.isAuthenticated, CartController.deleteCartItems);
+  .route("/category/:id")
+  .delete(
+    authMiddleware.isAuthenticated,
+    authMiddleware.restrictTo(Role.Admin),
+    CategoryController.deleteCategory
+  )
+  .patch(
+    authMiddleware.isAuthenticated,
+    authMiddleware.restrictTo(Role.Admin),
+    CategoryController.updateCategory
+  );
 
 export default router;

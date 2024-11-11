@@ -22,6 +22,12 @@ class Order extends Model {
 
   @Column({
     type: DataType.STRING,
+    validate: {
+      len: {
+        args: [10, 10],
+        msg: "Invalid phone number",
+      },
+    },
   })
   declare phoneNumber: string;
 
