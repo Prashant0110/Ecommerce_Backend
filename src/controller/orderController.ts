@@ -3,7 +3,13 @@ import { AuthRequest } from "../middleware/authMiddleware";
 import Order from "../models/Order";
 import OrderDetails from "../models/orderDetails";
 import Payment from "../models/Payment";
-import { khaltiResponse, OrderData, PaymentMethod } from "../types/orderTypes";
+import {
+  khaltiResponse,
+  OrderData,
+  PaymentMethod,
+  TransactionStatus,
+  TransactionVerificationResponse,
+} from "../types/orderTypes";
 import { Response, Request } from "express";
 
 class OrderController {
@@ -80,6 +86,36 @@ class OrderController {
     } else {
       res.status(200).json({
         message: "order placed successfully",
+      });
+    }
+  }
+
+  public static async verifyTransaction(
+    req: AuthRequest,
+    res: Response
+  ): Promise<void> {
+    const { pidx } = req.body;
+    const userId = req.user?.id;
+    if (!pidx) {
+      res.status(400).json({
+        message: "Please enter pidx",
+      });
+      return;
+    }
+    const response = await axios.post(
+      "https://a.khalti.com/api/v2/epayment/lookup",
+      { pidx },
+      {
+        headers: {
+          Authorization: "Key 272920d8e3ad4a2e9a31ed54a7383109",
+        },
+      }
+    );
+    const data: TransactionVerificationResponse = response.data;
+    if (data.status === TransactionStatus.Completed) {
+    } else {
+      res.status(400).json({
+        message: "Transaction failed",
       });
     }
   }
